@@ -1,0 +1,5 @@
+[openstack_controller]
+server1.4aths.friocorte.com
+
+[openstack_compute]
+server1.4aths.friocorte.com

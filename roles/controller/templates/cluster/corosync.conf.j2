@@ -1,0 +1,30 @@
+totem {
+version: 2
+secauth: off
+cluster_name: openstack
+transport: udpu
+}
+
+nodelist {
+  node {
+        ring0_addr: {{[groups['openstack_controller'][0]][ansible_fqdn]}}
+        nodeid: 1
+       }
+  node {
+        ring0_addr: {{[groups['openstack_controller'][1]][ansible_fqdn]}}
+        nodeid: 2
+       }
+  node {
+        ring0_addr: {{[groups['openstack_controller'][3]][ansible_fqdn]}}
+        nodeid: 3
+       }
+}
+
+quorum {
+provider: corosync_votequorum
+
+}
+
+logging {
+to_syslog: yes
+}

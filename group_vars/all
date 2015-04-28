@@ -1,0 +1,58 @@
+---
+# Variables for openstack
+
+keystone_db_pass: Rottinva
+keystone_admin_token: 03a776b545249a6f6b2f
+
+glance_db_pass: RedebTix
+glance_filesystem_store_datadir: /var/lib/glance/images/
+
+nova_db_pass: Eawjoof2
+nova_libvirt_type: kvm
+
+quantum_db_pass: poufujusio
+quantum_external_interface: eth1
+
+cinder_db_pass: gamBefcel
+cinder_volume_dev: /dev/md127
+
+external_network_name: external_network
+external_subnet_name: external_sub_network
+external_subnet_cidr: 10.227.1.0/16
+external_router_name: external_router
+#
+#By default a tenant admin is created and below is the password for the admin user of the admin tenant.
+#
+admin_tenant: admin
+admin_tenant_user: admin
+admin_pass: waxDoptewv
+
+all_password
+
+#db_passwords
+keystone_db_pass: password
+glance_db_pass: password
+nova_db_pass: password
+neutron_db_pass: password
+cinder_db_pass: password
+
+#admin user info
+admin_tenant: admin
+admin_user: admin
+admin_pass: password
+
+#vip_address
+public_vip: 10.10.72.253
+internal_vip: 192.168.100.253
+admin_vip: 192.168.100.252
+
+#nova
+nova_admin: nova
+
+
+#neutron
+public_network_interface:
+external_network_name: external_network
+external_subnet_name: external_sub_network
+external_subnet_cidr: 10.10.72.0/24
+external_router_name: external_router

@@ -1,0 +1,26 @@
+---
+# The main openstack site deployment playbook
+
+- hosts: all
+  roles:
+    - common
+
+- hosts: openstack_controller
+  roles:
+    - controller
+
+- hosts: openstack_compute
+  roles:
+    - compute
+
+- hosts: ceph_osd
+  roles:
+    - osd
+
+- hosts: ceph_rgw
+  roles:
+    - rgw
+
+- hosts: ceph_mon
+  roles:
+    - mon
