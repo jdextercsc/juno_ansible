@@ -3,7 +3,7 @@
 
 - name: Install the base packages
   yum: name={{ item }} state=installed
-  with_items: 
+  with_items:
    - mysql
    - mysql-server
    - MySQL-python
@@ -16,8 +16,3 @@
   with_items:
    - mysqld
    - qpidd
-
-
-
-
-

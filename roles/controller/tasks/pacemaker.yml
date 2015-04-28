@@ -1,0 +1,28 @@
+#Install Pacemaker and configure
+
+- name: Install pacemaker
+  yum: name={{ item }} state=installed
+  with_items: |
+    - pacemaker
+    - cman
+    - pcs
+    - resource-agents
+    - fence-agents-all
+
+- name: setup hacluster passwd
+  user: name=hacluster comment='pacemkaers user'
+  shell: echo {{ all_password }} | passwd hacluster --stdin
+
+# Setup corosync
+#- name: copy configuration file for corosync
+  #template: src=corosync.conf.j2 dest=/etc/corosync/corosync.conf
+  #notify: restart corosync
+
+# start pacemaker
+- name: start pacemaker
+  service: name=pacemaker state=started enabled=yes
+
+# setup basic pacemaker
+- name: create cluster
+  shell: pcs cluster setup --name osp-control-cluster {{[groups['openstack_controller'][0]][ansible_fqdn]}} {{[groups['openstack_controller'][1]][ansible_fqdn]}} {{[groups['openstack_controller'][2]][ansible_fqdn]}}
+  shell: pcs cluster start
