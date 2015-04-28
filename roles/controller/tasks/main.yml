@@ -1,4 +1,19 @@
 ---
 # The mail include file  for the controller node
+- name: setenforce off
+  shell: setenforce 0
+
+- name: install iptables
+  yum: name={{ item }} state=installed
+  with_items:
+    - iptables
+    - iptables-services
+
+- name: add iptables
+  template: src=iptables.j2 dest=/etc/sysconfig/iptables
+  notify: restart iptables
+
+- name: iptables restart
+  shell: systemctl restart iptables
 
 - include: pacemaker.yml

@@ -1,28 +1,42 @@
+{% set head_node = hostvars[groups['openstack_controller'][0]] %}
+{% set node1 = hostvars[groups['openstack_controller'][1]] %}
+{% set node2 = hostvars[groups['openstack_controller'][2]] %}
 #Install Pacemaker and configure
 
 - name: Install pacemaker
-  yum: name={{ item }} state=installed
-  with_items: |
+  yum: name={{ item }} state=present
+  with_items:
     - pacemaker
-    - cman
+#    - cman
     - pcs
     - resource-agents
-    - fence-agents-all
 
 - name: setup hacluster passwd
   user: name=hacluster comment='pacemkaers user'
+
+- name: create password for hacluster  
   shell: echo {{ all_password }} | passwd hacluster --stdin
 
-# Setup corosync
+
+#Setup corosync
 #- name: copy configuration file for corosync
-  #template: src=corosync.conf.j2 dest=/etc/corosync/corosync.conf
-  #notify: restart corosync
+#  template: src=cluster/corosync.conf.j2 dest=/etc/corosync/corosync.conf
+#  notify: restart corosync
 
 # start pacemaker
-- name: start pacemaker
-  service: name=pacemaker state=started enabled=yes
+#- name: start pacemaker
+#  service: name=pacemaker state=started enabled=yes
 
 # setup basic pacemaker
+- name: pcs auth
+  shell: pcs cluster auth {{[groups['openstack_controller'][0]].ansible_default_ipv4.address}} {{[groups['openstack_controller'][1]].ansible_default_ipv4.address}} {{[groups['openstack_controller'][2]].ansible_default_ipv4.address}} -u halcluster -p password
+
+
 - name: create cluster
-  shell: pcs cluster setup --name osp-control-cluster {{[groups['openstack_controller'][0]][ansible_fqdn]}} {{[groups['openstack_controller'][1]][ansible_fqdn]}} {{[groups['openstack_controller'][2]][ansible_fqdn]}}
+  #shell: pcs cluster setup --name osp-control-cluster {{[groups['openstack_controller'][0]][ansible_fqdn]}} {{[groups['openstack_controller'][1]][ansible_fqdn]}} {{[groups['openstack_controller'][2]][ansible_fqdn]}}
+  shell: pcs cluster setup --name osp-control-cluster {{[groups['openstack_controller'][0]].ansible_default_ipv4.address}} {{[groups['openstack_controller'][1]].ansible_default_ipv4.address}} {{[groups['openstack_controller'][2]].ansible_default_ipv4.address}} 
+
+- name: start cluster  
   shell: pcs cluster start
+
+

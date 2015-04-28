@@ -1,9 +1,9 @@
 ---
 # The main openstack site deployment playbook
 
-- hosts: all
-  roles:
-    - common
+#- hosts: all
+#  roles:
+#    - common
 
 - hosts: openstack_controller
   roles:
@@ -13,14 +13,14 @@
   roles:
     - compute
 
-- hosts: ceph_osd
-  roles:
-    - osd
+#- hosts: ceph_osd
+#  roles:
+#    - osd
 
-- hosts: ceph_rgw
-  roles:
-    - rgw
+#- hosts: ceph_rgw
+#  roles:
+#    - rgw
 
-- hosts: ceph_mon
-  roles:
-    - mon
+#- hosts: ceph_mon
+#  roles:
+#    - mon

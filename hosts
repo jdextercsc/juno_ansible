@@ -1,5 +1,5 @@
 [openstack_controller]
-server1.4aths.friocorte.com
-
+controller-1.novalocal
+controller-2.novalocal
+controller-3.novalocal
 [openstack_compute]
-server1.4aths.friocorte.com

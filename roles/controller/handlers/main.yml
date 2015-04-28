@@ -1,5 +1,13 @@
 ---
 # Handlers for the controller plays
+- name: restart iptables
+  service: name=iptables state=restarted
+
+- name: restart corosync
+  service: name=corosync state=restarted
+  
+- name: restart pacemaker
+  service: name=pacemaker state=restarted
 
 - name: restart keystone
   service: name=openstack-keystone state=restarted
