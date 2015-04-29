@@ -1,10 +1,10 @@
 
 # setup basic pacemaker
 - name: pcs auth
-  #shell: "pcs cluster auth controller-1.novalocal controller-2.novalocal controller-3.novalocal  -u hacluster -p password"
-  shell: pcs cluster auth {{[item]['ansible_node']}} -u hacluster -p password
-  with_items:
-    - groupvars['openstack-controller']
+  shell: "pcs cluster auth controller-1.novalocal controller-2.novalocal controller-3.novalocal  -u hacluster -p password"
+  #shell: pcs cluster auth {{[item]['ansible_nodename']}} -u hacluster -p password
+  #with_items:
+  #  - groupvars['openstack-controller']
 
 - name: create cluster
   shell: "pcs cluster setup --name osp-control-cluster controller-1.novalocal controller-2.novalocal controller-3.novalocal"
