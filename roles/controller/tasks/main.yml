@@ -19,4 +19,4 @@
 - include: pacemaker.yml
 
 - include: head_node.yml
-  when: "hostvar['ansible_fqdn']= 'controller-1.novalocal'"
+  when: "hostvar['ansible_fqdn'] is 'controller-1.novalocal'"
