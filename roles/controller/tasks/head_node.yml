@@ -5,8 +5,4 @@
 
 
 - name: create cluster
-  shell: pcs cluster setup --name osp-control-cluster controller-1.novalocal controller-2.novalocal controller-3.novalocal --force
-
-
-#- name: start cluster
-  #shell: pcs cluster start
+  shell: pcs cluster setup --name osp-control-cluster controller-1.novalocal controller-2.novalocal controller-3.novalocal --force --start
