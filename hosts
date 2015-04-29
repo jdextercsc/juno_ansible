@@ -1,7 +1,7 @@
 [common]
-controller-1.novalocal
-controller-2.novalocal
-controller-3.novalocal
+#controller-1.novalocal
+#controller-2.novalocal
+#controller-3.novalocal
 
 [cluster]
 #controller-1.novalocal
