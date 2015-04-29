@@ -7,7 +7,7 @@
     - groupvars['openstack-controller']
 
 - name: create cluster
-  shell: "pcs cluster setup --name osp-control-cluster controller-1.novalocal controller-2.novalocal controller-3.novalocal" --force
+  shell: pcs cluster setup --name osp-control-cluster controller-1.novalocal controller-2.novalocal controller-3.novalocal --force
 
 
 #- name: start cluster
