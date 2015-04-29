@@ -1,16 +1,12 @@
 # {% set head_node = hostvars[groups['openstack_controller'][0]] %}
 # setup basic pacemaker
 - name: pcs auth
-  shell: echo "pcs cluster auth {{ hostvar[item]['ansible_eth0']['ipv4']['address'] }}  -u halcluster -p password"
-  with_items:
-    - controller-1
-    - controller-2
-    - controller-3
+  shell: pcs cluster auth controller-1.novalocal controller-2.novalocal controller-3.novalocal  -u halcluster -p password
   #shell: pcs cluster auth {{[groups['openstack_controller'][0]].ansible_default_ipv4.address}} {{[groups['openstack_controller'][1]].ansible_default_ipv4.address}} {{[groups['openstack_controller'][2]].ansible_default_ipv4.address}} -u halcluster -p password
   #when: ansible_default_ipv4.ansible_fqdn = 'controller-1'
 
-#- name: create cluster
-  #shell: pcs cluster setup --name osp-control-cluster {{[groups['openstack_controller'][0]][ansible_fqdn]}} {{[groups['openstack_controller'][1]][ansible_fqdn]}} {{[groups['openstack_controller'][2]][ansible_fqdn]}}
+- name: create cluster
+  shell: pcs cluster setup --name osp-control-cluster controller-1.novalocal controller-2.novalocal controller-3.novalocal
   #shell: pcs cluster setup --name osp-control-cluster {{[groups['openstack_controller'][0]].ansible_default_ipv4.address}} {{[groups['openstack_controller'][1]].ansible_default_ipv4.address}} {{[groups['openstack_controller'][2]].ansible_default_ipv4.address}}
   #when: ansible_default_ipv4.ansible_fqdn = 'controller-1'
 
