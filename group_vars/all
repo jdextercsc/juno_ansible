@@ -1,5 +1,6 @@
 ---
 # Variables for openstack
+head_node: controller-1
 
 all_password: password
 
