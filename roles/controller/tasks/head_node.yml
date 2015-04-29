@@ -1,6 +1,8 @@
 # setup basic pacemaker
 - name: pcs auth
-  shell: echo "pcs cluster auth {{ groupvar[groups['openstack_controller'][0]][ansible_eth0][ipv4][address]}}  -u halcluster -p password"
+  shell: echo "pcs cluster auth {{ [item][ansible_fqdn] }}  -u halcluster -p password"
+  with_items:
+    - groupvar['openstack-controller']
   #shell: pcs cluster auth {{[groups['openstack_controller'][0]].ansible_default_ipv4.address}} {{[groups['openstack_controller'][1]].ansible_default_ipv4.address}} {{[groups['openstack_controller'][2]].ansible_default_ipv4.address}} -u halcluster -p password
   #when: ansible_default_ipv4.ansible_fqdn = 'controller-1'
 
