@@ -1,3 +1,11 @@
+[common]
+
+[cluster]
+controller-1.novalocal
+controller-2.novalocal
+controller-3.novalocal
+
+
 [openstack_controller]
 controller-1.novalocal
 controller-2.novalocal
