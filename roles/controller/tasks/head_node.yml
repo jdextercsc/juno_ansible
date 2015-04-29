@@ -2,8 +2,7 @@
 # setup basic pacemaker
 - name: pcs auth
   shell: echo pcs cluster auth {{ hostvars[item]['ansible_hostname'] }}  -u hacluster -p password
-  with_items:
-    - groups.openstack_controller
+  with_items: groups.openstack_controller
 
 
 #- name: create cluster
