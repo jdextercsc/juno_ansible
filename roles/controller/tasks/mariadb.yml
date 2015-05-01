@@ -36,7 +36,7 @@
   when: ansible_fqdn == 'head_node'
 
 - name: configure mariaDB:pacemaker:create galera colocation
-  shell: pcs resource colocation c_ip_galera_on_mariadb inf vip_mariadb_galera clone_mariadb'
+  shell: pcs resource colocation c_ip_galera_on_mariadb inf vip_mariadb_galera clone_mariadb
   when: ansible_fqdn == 'head_node'
 
 #add iptables rules for galera and mysql
