@@ -1,44 +1,22 @@
-# This playbook installs and configure corosync and pacemaker on a set of nodes part of a given group.
 ---
+# The mail include file  for the controller node
+- name: setenforce off
+  shell: setenforce 0
 
-# See the file /etc/ansible/hosts where the group is actually defined. There might be a way to define groups in a file 'closer' to this playbook.
-- hosts: clusternodes
-  vars:
-    mcastport : 5405
-  tasks:
+- name: install iptables
+  yum: name={{ item }} state=installed
+  with_items:
+    - iptables
+    - iptables-services
 
-  # It would be better to use Ansible to change the IP tables config to allow corosync/pacemaker on the nodes part of the cluster.
-  - name: ensure iptables is stopped and is not running at boot time.
-    action: service name=iptables state=stopped enabled=no
+- name: add iptables
+  template: src=iptables.j2 dest=/etc/sysconfig/iptables
+  notify: restart iptables
 
-  - name: ensure python-selinux is installed on all nodes.
-    action: yum name=libselinux-python state=installed
+- name: iptables restart
+  shell: systemctl restart iptables
 
-  - name: set SELinux to permissive
-    action: selinux policy=targeted state=permissive
+- include: pacemaker.yml
 
-  - name: ensure SELinux is turned off
-    action: command /usr/sbin/setenforce 0
-
-  - name: ensure corosync is installed.
-    action: yum name=corosync state=installed
-
-  - name: write the corosync config files
-    action: template src=corosync.conf dest=/etc/corosync/corosync.conf
-
-  - name: add the pcmk file in the folder service.d for corosync configuration
-    action: copy src=pcmk dest=/etc/corosync/service.d/pcmk
-
-  - name: ensure Pacemaker is installed.
-    action: yum name=pacemaker state=installed
-
-  - name: ensure corosync is running (and automatically at boot time)
-    action: service name=corosync state=started enabled=yes
-
-  - name: ensure pacemaker is running automatically at boot time
-    action: command /sbin/chkconfig pacemaker on
-
-  - name: ensure Pacemaker is running (and also enabled to start at boot time). For some reason, Pacemaker will fail to start when the steps below are done synchronously.
-    action: service name=pacemaker state=started enabled=yes
-    async: 60
-    poll:  5
+- include: head_node.yml
+  when: ansible_nodename == 'controller-1.novalocal'

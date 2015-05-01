@@ -3,12 +3,6 @@
 - name: restart iptables
   service: name=iptables state=restarted
 
-- name: restart corosync
-  service: name=corosync state=restarted
-  
-- name: restart pacemaker
-  service: name=pacemaker state=restarted
-
 - name: restart keystone
   service: name=openstack-keystone state=restarted
 
@@ -19,7 +13,7 @@
    - openstack-glance-registry
 
 - name: restart nova
-  service: name={{ item }} state=restarted 
+  service: name={{ item }} state=restarted
   with_items:
    - openstack-nova-api
    - openstack-nova-scheduler
@@ -29,7 +23,7 @@
    - openstack-nova-conductor
 
 - name: restart quantum
-  service: name={{ item }} state=restarted 
+  service: name={{ item }} state=restarted
   with_items:
    - quantum-server
    - quantum-l3-agent
