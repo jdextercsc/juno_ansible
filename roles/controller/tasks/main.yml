@@ -1,6 +1,6 @@
 # copy sysctl settings
 - name: copy 99-sysctl.conf
-  file: src=sysctl.conf dest=/etc/sysctl.d/99-sysctl.conf owner=root group=root mode=0644
+  file: src=sysctl.conf dest=/etc/sysctl.d/99-sysctl.conf owner=root group=root mode=0644 force
 
 # Install the controller services
 - include: mariadb.yml
