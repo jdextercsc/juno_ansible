@@ -32,7 +32,7 @@
   when: ansible_fqdn == 'head_node'
 
 - name: configure mariaDB:pacemaker:create galera clone
-  shell: 'pcs resource clone clone_mariadb mariadb_galera meta interleave="true"''
+  shell: 'pcs resource clone clone_mariadb mariadb_galera meta interleave="true"'
   when: ansible_fqdn == 'head_node'
 
 - name: configure mariaDB:pacemaker:create galera colocation
