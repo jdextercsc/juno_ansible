@@ -20,9 +20,11 @@
   shell: 'mysqld --wsrep_cluster_address=gcomm:// &'
   when: ansible_fqdn == 'controller-1.novalocal'
 
-- name: adding galera.crm
-  template: src=galera.crm.j2 dest=/tmp/galera.crm
+- name: configure mariaDB:pacemaker
+  shell: {{item}}
+  with_items:
+    - 'pcs resource create vip_mariadb_galera ocf:heartbeat:IPaddr2 params nic="eth1" iflabel="galera" ip="{{mariadb_vip}}" cidr_netmask="24"'
+    - 'pcs resource create mariadb_galera ocf:heartbeat:mysql params config="/etc/mysql/my.cnf" pid="/var/run/mysqld/mysqld.pid" socket="/var/run/mysqld/mysqld.sock" binary="/usr/sbin/mysqld"   op monitor interval="30s" op start interval="0" timeout="60s" op stop interval="0" timeout="60s"'
+    - 'clone clone_mariadb mariadb_galera meta interleave="true"'
+    - 'colocation c_ip_galera_on_mariadb inf vip_mariadb_galera clone_mariadb'
   when: ansible_fqdn == 'controller-1.novalocal'
-
-- name: import into pacemaker configuration
-  shell: 'crm configure load upate /tmp/galera.crm'
