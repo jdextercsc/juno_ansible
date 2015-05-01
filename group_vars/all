@@ -18,8 +18,9 @@ admin_pass: password
 
 #vip_address
 public_vip: 10.10.72.253
-internal_vip: 192.168.100.253
+internal_vip: 192.168.100.251
 admin_vip: 192.168.100.252
+mariadb_vip: 192.168.100.250
 
 #nova
 nova_admin: nova
