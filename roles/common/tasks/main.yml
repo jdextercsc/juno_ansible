@@ -1,6 +1,7 @@
 ---
 # The common tasks
 
+
 - name: Install required packages
   yum: name={{ item }} state=installed
   with_items:
@@ -9,6 +10,7 @@
    - scsi-target-utils
    - dbus
    - libselinux-python
+   - yum-plugin-priorities
   notify: restart services
 
 - name: install iptables
@@ -23,6 +25,7 @@
 
 - name: iptables restart
   shell: systemctl restart iptables
+
 
 - name: Create the hosts entry.
   template: src=hosts.j2 dest=/etc/hosts

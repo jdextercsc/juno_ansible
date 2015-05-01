@@ -17,6 +17,3 @@
   shell: systemctl restart iptables
 
 - include: pacemaker.yml
-
-- include: head_node.yml
-  when: ansible_nodename == 'controller-1.novalocal'
