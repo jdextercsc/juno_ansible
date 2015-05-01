@@ -1,3 +1,6 @@
+- debug: msg="head_node={{head_node}}
+- debug: msg="fqdn = {{ ansible_fqdn }}"
+
 #This installs and configures Mariadb
 - name: Install MariaDB
   yum: name={{ item }} state=installed
