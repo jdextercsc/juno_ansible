@@ -3,6 +3,7 @@
 
 - name: Install MariaDB
   yum: name={{ item }} state=installed
+  with_items:
     - mariadb
     - mariadb-galera-server
     - mariadb-galera-common
