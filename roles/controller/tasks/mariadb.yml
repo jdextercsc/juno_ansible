@@ -15,5 +15,3 @@
     - my.cnf.d/galera.cnf
     - my.cnf.d/mysql-clients.cnf
     - my.cnf.d/server.cnf
-
-- name: 
