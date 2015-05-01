@@ -15,3 +15,14 @@
     - my.cnf.d/galera.cnf
     - my.cnf.d/mysql-clients.cnf
     - my.cnf.d/server.cnf
+
+- name: Start the galera on controller-1
+  shell: 'mysqld --wsrep_cluster_address=gcomm:// &'
+  when: ansible_fqdn == 'controller-1.novalocal'
+
+- name: adding galera.crm
+  template: src=galera.crm.j2 dest=/tmp/galera.crm
+  when: ansible_fqdn == 'controller-1.novalocal'
+
+- name: import into pacemaker configuration
+  shell: 'crm configure load upate /tmp/galera.crm'
