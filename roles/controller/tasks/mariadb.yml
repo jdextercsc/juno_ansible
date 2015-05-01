@@ -21,7 +21,7 @@
 
 - name: Start the galera on controller-1
   shell: 'mysqld --wsrep_cluster_address=gcomm:// &'
-  when: {{'ansible_fqdn'}} == "{{head_node}}"
+  when: ansible_fqdn == "{{head_node}}"
 
 - name: configure mariaDB:pacemaker:create vip
   shell: 'pcs resource create vip_mariadb_galera ocf:heartbeat:IPaddr2 params nic="eth1" iflabel="galera" ip="{{mariadb_vip}}" cidr_netmask="24"'
