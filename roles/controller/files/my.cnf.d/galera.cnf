@@ -43,12 +43,12 @@ bind-address={{ ansible_eth0.ipv4.address}}
 {% set bootstrap_cluster = 0 -%}
 
 {# if this is the first node AND bootstrap #}
-{%- if groups['galera_cluster'].index(inventory_hostname) == 0 and "bootstrap" in bootstrap_check.stdout_lines[0] %}
+{%- if groups['openstack_controller'].index(inventory_hostname) == 0 and "bootstrap" in bootstrap_check.stdout_lines[0] %}
   {%- set bootstrap_cluster = 1 %}
 {% endif -%}
 
 {%- if not bootstrap_cluster %}
-  {%- for node in groups['galera_cluster'] %}
+  {%- for node in groups['openstack_controller'] %}
     {%- if hostvars[node].ansible_default_ipv4.address !=  ansible_eth0.ipv4.address %}
       {%- set _ = cluster_members.append(hostvars[node].ansible_default_ipv4.address) -%}
     {% endif -%}
