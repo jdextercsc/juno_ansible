@@ -1,6 +1,4 @@
 #This installs and configures Mariadb
-- name: install mariadb and galara
-
 - name: Install MariaDB
   yum: name={{ item }} state=installed
   with_items:
