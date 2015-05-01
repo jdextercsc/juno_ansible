@@ -40,8 +40,8 @@ bind-address={{ ansible_eth0.ipv4.address}}
 {# list of cluster members #}
 {% set cluster_members = [] -%}
 {%for node in groups['openstack_controller'] %}
-  {%cluster_members.append(hostvars[node].ansible_default_ipv4.address) -%}
-{% endfor -%}
+  {%cluster_members.append(hostvars[node].ansible_default_ipv4.address) %}
+{% endfor %}
 
 wsrep_cluster_address   = gcomm://{{ ",".join(cluster_members) }}
 
