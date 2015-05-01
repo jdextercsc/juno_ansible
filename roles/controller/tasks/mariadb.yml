@@ -25,18 +25,18 @@
 
 - name: configure mariaDB:pacemaker:create vip
   shell: 'pcs resource create vip_mariadb_galera ocf:heartbeat:IPaddr2 params nic="eth1" iflabel="galera" ip="{{mariadb_vip}}" cidr_netmask="24"'
-  when: {{'ansible_fqdn'}} == "{{head_node}}"
+  when: ansible_fqdn == "{{head_node}}"
 
 - name: configure mariaDB:pacemaker:create galera resource
   shell: 'pcs resource create mariadb_galera ocf:heartbeat:mysql params config="/etc/mysql/my.cnf" pid="/var/run/mysqld/mysqld.pid" socket="/var/run/mysqld/mysqld.sock" binary="/usr/sbin/mysqld"   op monitor interval="30s" op start interval="0" timeout="60s" op stop interval="0" timeout="60s"'
-  when: {{'ansible_fqdn'}} == "{{head_node}}"
+  when: ansible_fqdn == "{{head_node}}"
 
 - name: configure mariaDB:pacemaker:create galera clone
   shell: 'pcs resource clone clone_mariadb mariadb_galera meta interleave="true"'
-  when: {{ansible_fqdn'}} == "{{head_node}}"
+  when: ansible_fqdn == "{{head_node}}"
 
 - name: configure mariaDB:pacemaker:create galera colocation
   shell: 'pcs resource colocation c_ip_galera_on_mariadb inf vip_mariadb_galera clone_mariadb'
-  when: {{'ansible_fqdn'}} == "{{head_node}}"
+  when: ansible_fqdn == "{{head_node}}"
 
 #add iptables rules for galera and mysql
