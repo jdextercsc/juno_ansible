@@ -1,0 +1,32 @@
+#{% set head_node = hostvars[groups['openstack_controller'][0]] %}
+#{% set node1 = hostvars[groups['openstack_controller'][1]] %}
+#{% set node2 = hostvars[groups['openstack_controller'][2]] %}
+#Install Pacemaker and configure
+
+- name: Install pacemaker
+  yum: name={{ item }} state=present
+  with_items:
+    - pacemaker
+#    - cman
+    - pcs
+    - resource-agents
+
+- name: setup hacluster passwd
+  user: name=hacluster comment='pacemkaers user'
+
+- name: create password for hacluster
+  shell: echo {{ all_password }} | passwd hacluster --stdin
+
+
+- name: start pcsd
+  service: name=pcsd state=started enabled=yes
+
+- name: the hack from hell
+  shell: echo -n "pcs cluster setup --local --start --name osp-cluster --force " > /tmp/command.tmp
+
+- name: test variables
+  shell: echo -n "{{ hostvars[item]['ansible_fqdn'] }} " >> /tmp/command.tmp
+  with_items: groups.openstack_controller
+
+- name: run the hack
+  shell: sh /tmp/command.tmp
