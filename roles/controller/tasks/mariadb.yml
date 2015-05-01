@@ -1,6 +1,3 @@
-- name: define head_node
-  add_host: name={{head_node}} hosntame={{hostvars[groups['openstack_controller'][0]]}}
-
 #This installs and configures Mariadb
 - name: Install MariaDB
   yum: name={{ item }} state=installed
