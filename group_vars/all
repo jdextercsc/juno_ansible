@@ -1,7 +1,7 @@
 ---
-node1: {{hostvars[groups['openstack_controller'][0]]['ansible_fqdn']}}
-node2: {{hostvars[groups['openstack_controller'][1]]['ansible_fqdn']}}
-node3:"{{hostvars[groups['openstack_controller'][1]]['ansible_fqdn']}}"
+node1: "{{hostvars[groups['openstack_controller'][0]]['ansible_fqdn']}}"
+node2: "{{hostvars[groups['openstack_controller'][1]]['ansible_fqdn']}}"
+node3: "{{hostvars[groups['openstack_controller'][2]]['ansible_fqdn']}}"
 
 
 # Variables for openstack
