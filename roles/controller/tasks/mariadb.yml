@@ -25,8 +25,10 @@
   service: name=mariadb state=stopped enabled=no
 
 - name: remove databases
-  file:  path=/var/lib/mysql/ state=absent
+  file:  path=/var/lib/mysql/* state=absent
 
+- name: insure /var/lib/mysql is present and owned by mysql
+  file: path=/var/lib/mysql/  state=directory owner=mysql group=mysql mode=0644 recusrive=yes
 # - name: stop mariadb
 #   service: name=mariadb state=started
 #
@@ -54,7 +56,7 @@
 
 
 - name: create galara resource
-  shell: pcs resource create galera galera enable_creation=true wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}} meta master-max=3 --master  additional_parameters="--open-files-limit=4098" enable_creation=true meta ordered=true op promote timeout=300s on-fail=block check_user={{monitor_user}}  check_passwd={{monitor_pass}}
+  shell: pcs resource create galera galera enable_creation=true wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}} meta master-max=3 check_user={{monitor_user}}  check_passwd={{monitor_pass}} --master  additional_parameters="--open-files-limit=4098" enable_creation=true meta ordered=true op promote timeout=300s on-fail=block
   when: ansible_fqdn == "{{node1}}"
 
 #secure it
@@ -78,3 +80,6 @@
 # - name: flush privileges
 #   shell: mysql -e "FLUSH PRIVILEGES"
 #   when: ansible_fqdn == "{{node1}}"
+
+
+pcs resource create galera galera additional_parameters=\"--open-files-limit=4098\" enable_creation=true wsrep_cluster_address=gcomm://controller-1.novalocal,controller-2.novalocal,controller-3.novalocal  check_user=galera_mon check_passwd=password meta master-max=3 --master   meta ordered=true op promote timeout=300s on-fail=block
