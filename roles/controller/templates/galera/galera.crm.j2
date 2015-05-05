@@ -1,5 +1,1 @@
-primitive p_ip_mysql_galera ocf:heartbeat:IPaddr2 params nic="eth1" iflabel="galera" ip="{{ mariadb_vip }}" cidr_netmask="24"
-primitive p_mysql ocf:heartbeat:mysql params config="/etc/mysql/my.cnf" pid="/var/run/mysqld/mysqld.pid" socket="/var/run/mysqld/mysqld.sock"  binary="/usr/sbin/mysqld" op monitor interval="30s" op start interval="0" timeout="60s" op stop interval="0" timeout="60s"
-clone cl_mysql p_mysql meta interleave="true"
-colocation c_ip_galera_on_mysql inf: p_ip_mysql_galera cl_mysql
-property stonith-enabled="false"
+

@@ -42,8 +42,8 @@ bind-address={{ ansible_eth0.ipv4.address}}
 wsrep_provider=/usr/lib64/galera/libgalera_smm.so
 
 # Provider specific configuration options
-wsrep_provider_options="socket.ssl=true; socket.ssl_cert=/etc/pki/galera/galera.crt; socket.ssl_key=/etc/pki/galera/galera.key"
-
+wsrep_provider_options="socket.ssl=false; socket.ssl_cert=/etc/pki/galera/galera.crt; socket.ssl_key=/etc/pki/galera/galera.key"
+#wsrep_provider_options="socket.ssl=true; socket.ssl_cert=/etc/pki/galera/galera.crt; socket.ssl_key=/etc/pki/galera/galera.key"
 # Logical cluster name. Should be the same for all nodes.
 wsrep_cluster_name="galera_cluster"
 

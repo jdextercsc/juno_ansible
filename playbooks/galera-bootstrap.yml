@@ -1,27 +1,27 @@
-
-- name: Start the galera on node1
-  shell: 'mysqld --wsrep_cluster_address=gcomm:// &'
-  when: ansible_fqdn == "{{node1}}"
-
-- name: setup users in mariadb for cluster check
-  mysql_user: name={{monitor_user}} password={{monitor_pass}} priv=*.*:ALL state=present
-
-- name: setup users in mariadb for root
-  mysql_user: name=root password={{root_pass}} priv=*.*:ALL state=present
-
-
-
-- name: Start galera cluster on node2
-  shell: 'mysqld --wsrep_cluster_address=gcomm:// "{{hostvars[groups['openstack_controller'][1]]['ansible_eth0']['ipv4']['address']}}"'
-  when: ansible_fqdn == "{{node2}}"
-
-- name: Start galera cluster on node3
-  shell: 'mysqld --wsrep_cluster_address=gcomm:// "{{hostvars[groups['openstack_controller'][1]]['ansible_eth0']['ipv4']['address']}}","{{hostvars[groups['openstack_controller'][2]]['ansible_eth0']['ipv4']['address']}}"'
-  when: ansible_fqdn == "{{node3}}"
-
-- name: clustercheck
-  command: /usr/bin/clustercheck
-  notify: restart galera
+# Manual bootstrap process
+# - name: Start the galera on node1
+#   shell: 'mysqld --wsrep_cluster_address=gcomm:// &'
+#   when: ansible_fqdn == "{{node1}}"
+#
+# - name: setup users in mariadb for cluster check
+#   mysql_user: name={{monitor_user}} password={{monitor_pass}} priv=*.*:ALL state=present
+#
+# - name: setup users in mariadb for root
+#   mysql_user: name=root password={{root_pass}} priv=*.*:ALL state=present
+#
+#
+#
+# - name: Start galera cluster on node2
+#   shell: 'mysqld --wsrep_cluster_address=gcomm:// "{{hostvars[groups['openstack_controller'][1]]['ansible_eth0']['ipv4']['address']}}"'
+#   when: ansible_fqdn == "{{node2}}"
+#
+# - name: Start galera cluster on node3
+#   shell: 'mysqld --wsrep_cluster_address=gcomm:// "{{hostvars[groups['openstack_controller'][1]]['ansible_eth0']['ipv4']['address']}}","{{hostvars[groups['openstack_controller'][2]]['ansible_eth0']['ipv4']['address']}}"'
+#   when: ansible_fqdn == "{{node3}}"
+#
+# - name: clustercheck
+#   command: /usr/bin/clustercheck
+#   notify: restart galera
 
 
 #- name: configure mariaDB:pacemaker:create vip
@@ -31,3 +31,13 @@
 #- name: configure mariaDB:pacemaker:create galera resource
 #  shell: 'pcs resource create mariadb_galera ocf:heartbeat:mysql params config="/etc/my.cnf" pid="/var/run/mysqld/mysqld.pid" socket="/var/run/mysqld/mysqld.sock" binary="/usr/sbin/mysqld"   op monitor interval="30s" op start interval="0" timeout="60s" op stop interval="0" timeout="60s" --clone mariadb_clone meta interleave=true'
 #  when: ansible_fqdn == "{{head_node}}"
+
+
+# Import pacemaker settings for galera
+- name: create galera vip
+  
+
+- name: create galara resource
+  shell: pcs resource create galera galera enable_creation=true wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}} meta master-max=3 --master  additional_parameters="--open-files-limit=4098" enable_creation=true meta master-max=$(echo $PHD_ENV_nodes | wc -c) ordered=true op promote timeout=300s on-fail=block
+
+-
