@@ -40,6 +40,3 @@ external_network_name: external_network
 external_subnet_name: external_sub_network
 external_subnet_cidr: 10.10.72.0/24
 external_router_name: external_router
-
-
-GRANT ALL PRIVILEGES ON *.* TO ‘galera_mon'@'localhost' IDENTIFIED BY ‘password' WITH GRANT OPTION;
