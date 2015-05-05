@@ -28,4 +28,4 @@
 #add iptables rules for galera and mysql
 
 - name: copy clustercheck
-  template: src=/galera/clustercheck dest=/etc/sysconfig/clustercheck
+  template: src=galera/clustercheck dest=/etc/sysconfig/clustercheck
