@@ -5,7 +5,7 @@
 - name: Install MariaDB
   yum: name={{ item }} state=installed
   with_items:
-    - mariadb
+    - mariadbpcs
     - mariadb-galera-server
     - mariadb-galera-common
     - mariadb-libs
@@ -27,14 +27,14 @@
 - name: remove databases
   file:  path=/var/lib/mysql/ state=absent
 
-- name: stop mariadb
-  service: name=mariadb state=started
-
-- name: set user for cluster_check
-  shell: mysql -e GRANT ALL PRIVILEGES ON *.* TO ‘"{mariadb_mon}}"'@'localhost' IDENTIFIED BY ‘{{mariadb_pass}}' WITH GRANT OPTION
-
-- name: stop mariadb
-  service: name=mariadb state=stopped
+# - name: stop mariadb
+#   service: name=mariadb state=started
+#
+# - name: set user for cluster_check
+#   shell: mysql -e GRANT ALL PRIVILEGES ON *.* TO ‘"{mariadb_mon}}"'@'localhost' IDENTIFIED BY ‘{{mariadb_pass}}' WITH GRANT OPTION
+#
+# - name: stop mariadb
+#   service: name=mariadb state=stopped
 #- name: setup users in mariadb for cluster check
   #mysql_user: name={{monitor_user}} password={{monitor_pass}} priv=*.*:ALL state=present
 
@@ -54,7 +54,7 @@
 
 
 - name: create galara resource
-  shell: pcs resource create galera galera enable_creation=true wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}} meta master-max=3 --master  additional_parameters="--open-files-limit=4098" enable_creation=true meta master-max=$(echo $PHD_ENV_nodes | wc -c) ordered=true op promote timeout=300s on-fail=block
+  shell: pcs resource create galera galera enable_creation=true wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}} meta master-max=3 --master  additional_parameters="--open-files-limit=4098" enable_creation=true meta ordered=true op promote timeout=300s on-fail=block check_user={{galera_mon}}  check_passwd={{galera_pass}}
   when: ansible_fqdn == "{{node1}}"
 
 #secure it
