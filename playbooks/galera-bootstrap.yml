@@ -1,14 +1,36 @@
 # Manual bootstrap process
-# - name: Start the galera on node1
-#   shell: 'mysqld --wsrep_cluster_address=gcomm:// &'
-#   when: ansible_fqdn == "{{node1}}"
-#
-# - name: setup users in mariadb for cluster check
-#   mysql_user: name={{monitor_user}} password={{monitor_pass}} priv=*.*:ALL state=present
-#
-# - name: setup users in mariadb for root
-#   mysql_user: name=root password={{root_pass}} priv=*.*:ALL state=present
-#
+- name: Start the galera on node1
+   shell: 'mysqld --wsrep_cluster_address=gcomm:// &'
+   when: ansible_fqdn == "{{node1}}"
+
+#secure mysql
+- name: set root password
+  mariadb_root_password:{{root_pass}}
+
+- mariadb_users: name: {{mariadb_mon}} password: {{mariadb_pass}} priv: '*.*:ALL,GRANT'
+
+
+#- name: setup users in mariadb for cluster check
+  #mysql_user: name={{monitor_user}} password={{monitor_pass}} priv=*.*:ALL state=present
+
+#secure it
+# Kill the anonymous users
+- name: drop anonymous users
+  shell: mysql -e "DROP USER ''@'localhost'"
+# Because our hostname varies we'll use some Bash magic here.
+- name: drop hosnames
+  shell: mysql -e "DROP USER ''@'$(hostname)'"
+# Kill off the demo database
+- name: kill demo
+  shell: mysql -e "DROP DATABASE test"
+# Make our changes take effect
+- name: flush privileges
+  shell: mysql -e "FLUSH PRIVILEGES"
+# Any subsequent tries to run queries this way will get access denied because lack of usr/pwd param
+
+#- name: setup users in mariadb for root
+   #mysql_user: name=root password={{root_pass}} priv=*.*:ALL state=present
+
 #
 #
 # - name: Start galera cluster on node2
@@ -35,9 +57,7 @@
 
 # Import pacemaker settings for galera
 - name: create galera vip
-  
+  shell: pcs resource create ip-galera-pub-{{vip_mariadb}}   ocf:heartbeat:IPaddr2 ip={{vip_mariadb}} cidr_netmask=32 op monitor interval=30s
 
 - name: create galara resource
   shell: pcs resource create galera galera enable_creation=true wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}} meta master-max=3 --master  additional_parameters="--open-files-limit=4098" enable_creation=true meta master-max=$(echo $PHD_ENV_nodes | wc -c) ordered=true op promote timeout=300s on-fail=block
-
--

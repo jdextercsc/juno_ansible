@@ -19,6 +19,49 @@
     - my.cnf.d/mysql-clients.cnf
     - my.cnf.d/server.cnf
 
+# from https://github.com/davidvossel/phd/blob/master/scenarios/galera-basic.scenario
+
+- name: stop mariadb
+  service: name=mariadb state=stopped enabled=no
+
+- name: remove databases
+  file:  path=/var/lib/mysql/ state=absent
+
+# Manual bootstrap process
+- name: Start the galera on node1
+   shell: 'mysqld --wsrep_cluster_address=gcomm:// &'
+   when: ansible_fqdn == "{{node1}}"
+
+#secure mysql
+- name: set root password
+  mariadb_root_password:{{root_pass}}
+  when: ansible_fqdn == "{{node1}}"
+
+#- name: set user for cluster_check
+#  mariadb_users: name: {{mariadb_mon}} password: {{mariadb_pass}} priv: '*.*:ALL,GRANT'
+
+
+#- name: setup users in mariadb for cluster check
+  #mysql_user: name={{monitor_user}} password={{monitor_pass}} priv=*.*:ALL state=present
+
+#secure it
+# Kill the anonymous users
+- name: drop anonymous users
+  shell: mysql -e "DROP USER ''@'localhost'"
+  when: ansible_fqdn == "{{node1}}"
+# Because our hostname varies we'll use some Bash magic here.
+- name: drop hosnames
+  shell: mysql -e "DROP USER ''@'$(hostname)'"
+  when: ansible_fqdn == "{{node1}}"
+# Kill off the demo database
+- name: kill demo
+  shell: mysql -e "DROP DATABASE test"
+  when: ansible_fqdn == "{{node1}}"
+# Make our changes take effect
+- name: flush privileges
+  shell: mysql -e "FLUSH PRIVILEGES"
+  when: ansible_fqdn == "{{node1}}"
+# Any subsequent tries to run queries this way will get access denied because lack of usr/pwd param
 
 # colocation for vip and haproxy.  need to set later.
 #- name: configure mariaDB:pacemaker:create galera colocation
@@ -27,5 +70,13 @@
 
 #add iptables rules for galera and mysql
 
-- name: copy clustercheck
-  template: src=galera/clustercheck dest=/etc/sysconfig/clustercheck
+#- name: copy clustercheck
+  #template: src=galera/clustercheck dest=/etc/sysconfig/clustercheck
+
+
+
+- name: create galara resource
+  shell: pcs resource create galera galera enable_creation=true wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}} meta master-max=3 --master  additional_parameters="--open-files-limit=4098" enable_creation=true meta master-max=$(echo $PHD_ENV_nodes | wc -c) ordered=true op promote timeout=300s on-fail=block
+  when: ansible_fqdn == "{{node1}}"
+
+-
