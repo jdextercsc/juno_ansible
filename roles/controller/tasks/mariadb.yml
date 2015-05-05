@@ -28,7 +28,7 @@
   file:  path=/var/lib/mysql/* state=absent
 
 - name: insure /var/lib/mysql is present and owned by mysql
-  file: path=/var/lib/mysql/  state=directory owner=mysql group=mysql mode=0644 recusrive=yes
+  file: path=/var/lib/mysql/  state=directory owner=mysql group=mysql mode=0644 recurse=yes
 # - name: stop mariadb
 #   service: name=mariadb state=started
 #
