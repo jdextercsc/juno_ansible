@@ -50,3 +50,6 @@
    - openstack-nova-novncproxy
    - httpd
    - memcached
+
+- name: restart galera
+  service: name=mysqld  state=restarted

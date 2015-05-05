@@ -37,14 +37,6 @@ bind-address={{ ansible_eth0.ipv4.address}}
 ## WSREP options
 ##
 
-{# list of cluster members #}
-{% set cluster_members = [] -%}
-{%- for node in groups['openstack_controller'] %}
-  {%- set _ = cluster_members.append(hostvars[node].ansible_default_ipv4.address) -%}
-{% endfor -%}
-
-wsrep_cluster_address   = gcomm://{{ ",".join(cluster_members) }}
-
 
 # Full path to wsrep provider library or 'none'
 wsrep_provider=/usr/lib64/galera/libgalera_smm.so

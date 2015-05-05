@@ -19,17 +19,6 @@
     - my.cnf.d/mysql-clients.cnf
     - my.cnf.d/server.cnf
 
-- name: Start the galera on controller-1
-  shell: 'mysqld --wsrep_cluster_address=gcomm:// &'
-  when: ansible_fqdn == "{{head_node}}"
-
-- name: configure mariaDB:pacemaker:create vip
-  shell: 'pcs resource create vip_mariadb ocf:heartbeat:IPaddr2 params nic="eth0" iflabel="galera" ip="{{mariadb_vip}}" cidr_netmask="24"'
-  when: ansible_fqdn == "{{head_node}}"
-
-- name: configure mariaDB:pacemaker:create galera resource
-  shell: 'pcs resource create mariadb_galera ocf:heartbeat:mysql params config="/etc/my.cnf" pid="/var/run/mysqld/mysqld.pid" socket="/var/run/mysqld/mysqld.sock" binary="/usr/sbin/mysqld"   op monitor interval="30s" op start interval="0" timeout="60s" op stop interval="0" timeout="60s" --clone mariadb_clone meta interleave=true'
-  when: ansible_fqdn == "{{head_node}}"
 
 # colocation for vip and haproxy.  need to set later.
 #- name: configure mariaDB:pacemaker:create galera colocation
@@ -37,3 +26,6 @@
 #  when: ansible_fqdn == "{{head_node}}"
 
 #add iptables rules for galera and mysql
+
+- name: copy clustercheck
+  template: src=clustercheck dest=/etc/sysconfig/clustercheck

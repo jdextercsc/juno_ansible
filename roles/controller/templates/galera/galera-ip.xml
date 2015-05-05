@@ -1,0 +1,21 @@
+<cib admin_epoch="0" epoch="2" num_updates="0" validate-with="pacemaker-1.2">
+  <configuration>
+    <crm_config/>
+    <nodes/>
+    <resources>
+      <primitive class="ocf" id="ip-galera-pub-192.168.100.250" provider="heartbeat" type="IPaddr2">
+        <instance_attributes id="ip-galera-pub-192.168.100.250-instance_attributes">
+          <nvpair id="ip-galera-pub-192.168.100.250-instance_attributes-ip" name="ip" value="192.168.100.250"/>
+          <nvpair id="ip-galera-pub-192.168.100.250-instance_attributes-cidr_netmask" name="cidr_netmask" value="32"/>
+        </instance_attributes>
+        <operations>
+          <op id="ip-galera-pub-192.168.100.250-start-timeout-20s" interval="0s" name="start" timeout="20s"/>
+          <op id="ip-galera-pub-192.168.100.250-stop-timeout-20s" interval="0s" name="stop" timeout="20s"/>
+          <op id="ip-galera-pub-192.168.100.250-monitor-interval-30s" interval="30s" name="monitor"/>
+        </operations>
+      </primitive>
+    </resources>
+    <constraints/>
+  </configuration>
+  <status/>
+</cib>

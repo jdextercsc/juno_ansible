@@ -1,0 +1,7 @@
+# This file is being maintained by Puppet.
+# DO NOT EDIT
+
+MYSQL_USERNAME={{monitor_user}}
+MYSQL_PASSWORD={{monitor_pass}}
+MYSQL_HOST="localhost"
+MYSQL_PORT="3306"

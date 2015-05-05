@@ -1,6 +1,14 @@
 ---
+node1: {{hostvars[groups['openstack_controller'][0]]['ansible_fqdn']}}
+node2: {{hostvars[groups['openstack_controller'][1]]['ansible_fqdn']}}
+node3: {{hostvars[groups['openstack_controller'][2]]['ansible_fqdn']}}
+
+
 # Variables for openstack
 head_node: controller-1.novalocal
+monitor_user: galera_mon
+monitor_pass: password
+root_pass: password
 
 all_password: password
 
@@ -32,3 +40,6 @@ external_network_name: external_network
 external_subnet_name: external_sub_network
 external_subnet_cidr: 10.10.72.0/24
 external_router_name: external_router
+
+
+GRANT ALL PRIVILEGES ON *.* TO ‘galera_mon'@'localhost' IDENTIFIED BY ‘password' WITH GRANT OPTION;
