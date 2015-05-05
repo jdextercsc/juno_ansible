@@ -34,7 +34,7 @@
 
 #secure mysql
 - name: set root password
-  shell: mysql -e "UPDATE mysql.user SET Password = PASSWORD('"{{root_pass}}"') WHERE User = 'root'"
+  shell: mysql -e "UPDATE mysql.user SET Password = PASSWORD("{{root_pass}}") WHERE User = 'root'"
   when: ansible_fqdn == "{{node1}}"
 
 #- name: set user for cluster_check
