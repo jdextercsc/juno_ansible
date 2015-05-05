@@ -55,7 +55,7 @@
 
 
 
-# - name: create galara resource
+- name: create galara resource
   shell: pcs resource create galera galera  wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}}  enable_creation=true  check_user={{monitor_user}}  check_passwd={{monitor_pass}} additional_parameters="--open-files-limit=4098" enable_creation=true op promote timeout=300s on-fail=block meta master-max=3 ordered=true --master
   when: ansible_fqdn == "{{node1}}"
 #
