@@ -56,7 +56,7 @@
 
 
 - name: create galara resource
-  shell: pcs resource create galera galera enable_creation=true wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}} meta master-max=3 check_user={{monitor_user}}  check_passwd={{monitor_pass}} --master  additional_parameters="--open-files-limit=4098" enable_creation=true meta ordered=true op promote timeout=300s on-fail=block
+  shell: pcs resource create galera galera  wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}}  enable_creation=true  check_user={{monitor_user}}  check_passwd={{monitor_pass}} additional_parameters="--open-files-limit=4098" enable_creation=true op promote timeout=300s on-fail=block meta master-max=3 ordered=true --master
   when: ansible_fqdn == "{{node1}}"
 
 #secure it
@@ -82,4 +82,4 @@
 #   when: ansible_fqdn == "{{node1}}"
 
 
-pcs resource create galera galera additional_parameters=\"--open-files-limit=4098\" enable_creation=true wsrep_cluster_address=gcomm://controller-1.novalocal,controller-2.novalocal,controller-3.novalocal  check_user=galera_mon check_passwd=password meta master-max=3 --master   meta ordered=true op promote timeout=300s on-fail=block
+# pcs resource create galera galera additional_parameters=\"--open-files-limit=4098\" enable_creation=true wsrep_cluster_address=gcomm://controller-1.novalocal,controller-2.novalocal,controller-3.novalocal  check_user=galera_mon check_passwd=password meta master-max=3 --master   meta ordered=true op promote timeout=300s on-fail=block
