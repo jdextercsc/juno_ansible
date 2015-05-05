@@ -29,8 +29,8 @@
 
 # Manual bootstrap process
 - name: Start the galera on node1
-   shell: 'mysqld --wsrep_cluster_address=gcomm:// &'
-   when: ansible_fqdn == "{{node1}}"
+  shell: 'mysqld --wsrep_cluster_address=gcomm:// &'
+  when: ansible_fqdn == "{{node1}}"
 
 #secure mysql
 - name: set root password
