@@ -92,4 +92,4 @@
 pcs resource create db galera additional_parameters="--open-files-limit=4098" enable_creation=true wsrep_cluster_address=${gcomm} meta master-max=$(echo $PHD_ENV_nodes | wc -c) ordered=true op promote timeout=300s on-fail=block --master
 
 
-pcs resource create galera galera additional_parameters="--open-files-limit=4098" enable_creation=true wsrep_cluster_address=gcomm://192.168.100.113,192.168.100.115,192.168.100.114 check_user=galera_mon check_passwd=password op promote timeout=300s on-fail=block meta master-max=3 ordered=true --master
+# pcs resource create galera galera additional_parameters="--open-files-limit=4098" enable_creation=true wsrep_cluster_address=gcomm://192.168.100.113,192.168.100.115,192.168.100.114 check_user=galera_mon check_passwd=password op promote timeout=300s on-fail=block meta master-max=3 ordered=true --master
