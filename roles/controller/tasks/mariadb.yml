@@ -27,24 +27,41 @@
 - name: remove databases
   file:  path=/var/lib/mysql/ state=absent
 
-# Manual bootstrap process
-- name: Start the galera on node1
-  shell: mysqld_safe --wsrep_cluster_address=gcomm:// &
+- name: stop mariadb
+  service: name=mariadb state=started
+
+- name: set user for cluster_check
+  mariadb_users: name: {{mariadb_mon}} password: {{mariadb_pass}} priv: '*.*:ALL,GRANT'
+
+- name: stop mariadb
+  service: name=mariadb state=stopped
+#- name: setup users in mariadb for cluster check
+  #mysql_user: name={{monitor_user}} password={{monitor_pass}} priv=*.*:ALL state=present
+
+
+# Any subsequent tries to run queries this way will get access denied because lack of usr/pwd param
+
+# colocation for vip and haproxy.  need to set later.
+#- name: configure mariaDB:pacemaker:create galera colocation
+#  shell: 'pcs constraint colocation add c_ip_galera_on_mariadb inf vip_mariadb_galera clone_mariadb'
+#  when: ansible_fqdn == "{{head_node}}"
+
+#add iptables rules for galera and mysql
+
+- name: copy clustercheck
+  template: src=galera/clustercheck dest=/etc/sysconfig/clustercheck
+
+
+
+- name: create galara resource
+  shell: pcs resource create galera galera enable_creation=true wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}} meta master-max=3 --master  additional_parameters="--open-files-limit=4098" enable_creation=true meta master-max=$(echo $PHD_ENV_nodes | wc -c) ordered=true op promote timeout=300s on-fail=block
   when: ansible_fqdn == "{{node1}}"
 
+#secure it
 #secure mysql
 - name: set root password
   shell: mysql -e 'UPDATE mysql.user SET Password = PASSWORD("{{root_pass}}") WHERE User = 'root''
   when: ansible_fqdn == "{{node1}}"
-
-#- name: set user for cluster_check
-#  mariadb_users: name: {{mariadb_mon}} password: {{mariadb_pass}} priv: '*.*:ALL,GRANT'
-
-
-#- name: setup users in mariadb for cluster check
-  #mysql_user: name={{monitor_user}} password={{monitor_pass}} priv=*.*:ALL state=present
-
-#secure it
 # Kill the anonymous users
 - name: drop anonymous users
   shell: mysql -e "DROP USER ''@'localhost'"
@@ -60,21 +77,4 @@
 # Make our changes take effect
 - name: flush privileges
   shell: mysql -e "FLUSH PRIVILEGES"
-  when: ansible_fqdn == "{{node1}}"
-# Any subsequent tries to run queries this way will get access denied because lack of usr/pwd param
-
-# colocation for vip and haproxy.  need to set later.
-#- name: configure mariaDB:pacemaker:create galera colocation
-#  shell: 'pcs constraint colocation add c_ip_galera_on_mariadb inf vip_mariadb_galera clone_mariadb'
-#  when: ansible_fqdn == "{{head_node}}"
-
-#add iptables rules for galera and mysql
-
-#- name: copy clustercheck
-  #template: src=galera/clustercheck dest=/etc/sysconfig/clustercheck
-
-
-
-- name: create galara resource
-  shell: pcs resource create galera galera enable_creation=true wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}} meta master-max=3 --master  additional_parameters="--open-files-limit=4098" enable_creation=true meta master-max=$(echo $PHD_ENV_nodes | wc -c) ordered=true op promote timeout=300s on-fail=block
   when: ansible_fqdn == "{{node1}}"
