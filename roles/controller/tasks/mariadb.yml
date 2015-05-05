@@ -54,7 +54,7 @@
 
 
 - name: create galara resource
-  shell: pcs resource create galera galera enable_creation=true wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}} meta master-max=3 --master  additional_parameters="--open-files-limit=4098" enable_creation=true meta ordered=true op promote timeout=300s on-fail=block check_user={{galera_mon}}  check_passwd={{galera_pass}}
+  shell: pcs resource create galera galera enable_creation=true wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}} meta master-max=3 --master  additional_parameters="--open-files-limit=4098" enable_creation=true meta ordered=true op promote timeout=300s on-fail=block check_user={{monitor_user}}  check_passwd={{monitor_pass}}
   when: ansible_fqdn == "{{node1}}"
 
 #secure it
