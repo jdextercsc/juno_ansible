@@ -1,0 +1,15 @@
+## Template addition for Galera
+
+listen galera
+  bind {{mariadb_vip}}:3306
+  mode  tcp
+  option  tcplog
+  option  httpchk
+  option  tcpka
+  stick  on dst
+  stick-table  type ip size 2
+  timeout  client 90m
+  timeout  server 90m
+  server {{node1}} {{hostvars[groups['openstack_controller'][0]]['ansible_eth0']['ipv4']['address']}}:3306  check inter 1s port 9200 on-marked-down shutdown-sessions
+  server {{node1}} {{hostvars[groups['openstack_controller'][1]]['ansible_eth0']['ipv4']['address']}}:3306  check inter 1s port 9200 on-marked-down shutdown-sessions
+  server {{node1}} {{hostvars[groups['openstack_controller'][2]]['ansible_eth0']['ipv4']['address']}}:3306  check inter 1s port 9200 on-marked-down shutdown-sessions

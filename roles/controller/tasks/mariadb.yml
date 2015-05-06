@@ -1,5 +1,5 @@
-- debug: msg="head_node={{head_node}}"
-- debug: msg="fqdn = {{ ansible_fqdn }}"
+# - debug: msg="head_node={{head_node}}"
+# - debug: msg="fqdn = {{ ansible_fqdn }}"
 
 #This installs and configures Mariadb
 - name: Install MariaDB
@@ -20,76 +20,24 @@
     - my.cnf.d/server.cnf
 
 # from https://github.com/davidvossel/phd/blob/master/scenarios/galera-basic.scenario
-
+# make sure MariaDB is stopped As pacemaker will manage it
 - name: stop mariadb
   service: name=mariadb state=stopped enabled=no
 
-# - name: remove databases
-#   file:  path=/var/lib/mysql/* state=absent
-#
-# - name: insure /var/lib/mysql is present and owned by mysql
-#   file: path=/var/lib/mysql/  state=directory owner=mysql group=mysql mode=0644 recurse=yes
-# - name: stop mariadb
-#   service: name=mariadb state=started
-#
-# - name: set user for cluster_check
-#   shell: mysql -e GRANT ALL PRIVILEGES ON *.* TO ‘"{mariadb_mon}}"'@'localhost' IDENTIFIED BY ‘{{mariadb_pass}}' WITH GRANT OPTION
-#
-# - name: stop mariadb
-#   service: name=mariadb state=stopped
-#- name: setup users in mariadb for cluster check
-  #mysql_user: name={{monitor_user}} password={{monitor_pass}} priv=*.*:ALL state=present
+- name: remove databases
+  file:  path=/var/lib/mysql/* state=absent
 
+- name: insure /var/lib/mysql is present and owned by mysql
+  file: path=/var/lib/mysql/  state=directory owner=mysql group=mysql mode=0644 recurse=yes
 
-# Any subsequent tries to run queries this way will get access denied because lack of usr/pwd param
-
-# colocation for vip and haproxy.  need to set later.
-#- name: configure mariaDB:pacemaker:create galera colocation
-#  shell: 'pcs constraint colocation add c_ip_galera_on_mariadb inf vip_mariadb_galera clone_mariadb'
-#  when: ansible_fqdn == "{{head_node}}"
-
-#add iptables rules for galera and mysql
-
-- name: copy clustercheck
-  template: src=galera/clustercheck dest=/etc/sysconfig/clustercheck
+- name: remove clustercheck
+  file: path=/etc/sysconfig/clustercheck state=absent
 
 
 
 - name: create galara resource
-  shell: pcs resource create galera galera  wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}}  enable_creation=true  check_user={{monitor_user}}  check_passwd={{monitor_pass}} additional_parameters="--open-files-limit=4098"  op promote timeout=300s on-fail=block meta master-max=3 ordered=true --master
+  shell: pcs resource create galera galera  wsrep_cluster_address=gcomm://{{node1}},{{node2}},{{node3}}  enable_creation=true   additional_parameters="--open-files-limit=4098"  op promote timeout=300s on-fail=block meta master-max=3 ordered=true --master
   when: ansible_fqdn == "{{node1}}"
-#
 
-# #use IP addresses instead of fqdn
-# - name: create galara resource
-#   shell: pcs resource create galera galera additional_parameters="--open-files-limit=4098" enable_creation=true wsrep_cluster_address=gcomm://{{hostvars[groups['openstack_controller'][0]]['ansible_eth0']['ipv4']['address']}}, {{hostvars[groups['openstack_controller'][1]]['ansible_eth0']['ipv4']['address']}},{{hostvars[groups['openstack_controller'][2]]['ansible_eth0']['ipv4']['address']}}check_user={{monitor_user}}  check_passwd={{monitor_pass}} additional_parameters="--open-files-limit=4098" op promote timeout=300s on-fail=block meta master-max=3 ordered=true --master
-#   when: ansible_fqdn == "{{node1}}"
-
-#secure it
-#secure mysql
-# - name: set root password
-#   shell: mysql -e 'UPDATE mysql.user SET Password = PASSWORD("{{root_pass}}") WHERE User = 'root''
-#   when: ansible_fqdn == "{{node1}}"
-# # Kill the anonymous users
-# - name: drop anonymous users
-#   shell: mysql -e "DROP USER ''@'localhost'"
-#   when: ansible_fqdn == "{{node1}}"
-# # Because our hostname varies we'll use some Bash magic here.
-# - name: drop hosnames
-#   shell: mysql -e "DROP USER ''@'$(hostname)'"
-#   when: ansible_fqdn == "{{node1}}"
-# # Kill off the demo database
-# - name: kill demo
-#   shell: mysql -e "DROP DATABASE test"
-#   when: ansible_fqdn == "{{node1}}"
-# # Make our changes take effect
-# - name: flush privileges
-#   shell: mysql -e "FLUSH PRIVILEGES"
-#   when: ansible_fqdn == "{{node1}}"
-
-
-# pcs resource create galera galera additional_parameters=\"--open-files-limit=4098\" enable_creation=true wsrep_cluster_address=gcomm://controller-1.novalocal,controller-2.novalocal,controller-3.novalocal  check_user=galera_mon check_passwd=password meta master-max=3 --master   meta ordered=true op promote timeout=300s on-fail=block
-# pcs resource create db galera additional_parameters="--open-files-limit=4098" enable_creation=true wsrep_cluster_address=${gcomm} meta master-max=$(echo $PHD_ENV_nodes | wc -c) ordered=true op promote timeout=300s on-fail=block --master
-
-
-# pcs resource create galera galera additional_parameters="--open-files-limit=4098" enable_creation=true wsrep_cluster_address=gcomm://192.168.100.113,192.168.100.115,192.168.100.114 check_user=galera_mon check_passwd=password op promote timeout=300s on-fail=block meta master-max=3 ordered=true --master
+- name: create galera VIP
+  shell: pcs resource create ip-galera-{{mariadb_vip}} ocf:heartbeat:IPaddr2 ip={{mariadb_vip}} cidr_netmask=32 op monitor interval=30s
