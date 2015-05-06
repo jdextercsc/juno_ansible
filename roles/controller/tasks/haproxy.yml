@@ -1,6 +1,6 @@
 #install haproxy packages
 - name: Install haproxy
-  yum: name haproxy state=installed
+  yum: name=haproxy state=installed
 
 - name: copy base configure over.
   file: src=haproxy/haproxy_base.cfg dest=/etc/haproxy/haproxy.cfg
