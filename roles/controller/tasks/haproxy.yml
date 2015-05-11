@@ -2,18 +2,21 @@
 - name: Install haproxy
   yum: name=haproxy state=installed
 
+- name: remove default config
+  file: path=dest=/etc/haproxy/haproxy.cfg state=absent
+
 - name: copy base configure over.
   file: src=haproxy/haproxy_base.cfg dest=/etc/haproxy/haproxy.cfg
 
 
 - name: Add vip for loadbalance
-  shell: pcs resource create loadbalancer-{{lb_vip}} ocf:heartbeat:IPaddr2 ip={{mariadb_vip}} cidr_netmask=32 op monitor interval=30s
+  shell: pcs resource create ip-lb-{{lb_vip}} ocf:heartbeat:IPaddr2 ip={{mariadb_vip}} cidr_netmask=32 op monitor interval=30s
 
 - name: add pcs resource for LB
-  shell: pcs resource create lb-haproxy --group haproxy systemd:haproxy op monitor interval=10s
+  shell: pcs resource create lb-haproxy systemd:haproxy op monitor start-delay=10s --clone
 
 - name: contraints for LB
   shell: pcs constraint {{ item }}
   with_items:
-    - colocation add lb-haproxy loadbalancer-{{lb_vip}}
-    - order loadbalancer-{{lb_vip}} lb-haproxy
+    - colocation add lb-haproxy  ip-lb-{{lb_vip}}
+    - order start lb-haproxy then start  ip-lb-{{lb_vip}}
