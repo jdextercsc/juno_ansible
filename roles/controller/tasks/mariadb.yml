@@ -41,3 +41,9 @@
 
 - name: create galera VIP
   shell: pcs resource create ip-galera-{{mariadb_vip}} ocf:heartbeat:IPaddr2 ip={{mariadb_vip}} cidr_netmask=32 op monitor interval=30s
+
+- name: set constraints on VIP
+  shell: pcs constraint {{ item }}
+  with_items:
+    - colocation add ip-galera-{{mariadb_vip}} haproxy
+    - order start haproxy then start ip-galera-{{mariadb_vip}}

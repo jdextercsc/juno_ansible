@@ -1,6 +1,7 @@
 ---
 # The common tasks
 
+- include: subscription_manager.yml
 
 - name: Install required packages
   yum: name={{ item }} state=installed
@@ -27,11 +28,6 @@
   shell: systemctl restart iptables
 
 
-- name: Create the hosts entry.
-  template: src=hosts.j2 dest=/etc/hosts
-
-- name: start the openvswitch service.
-  service: name=openvswitch state=started
 
 - name: Disable selinux dynamically
   shell: creates=/etc/sysconfig/selinux.disabled setenforce 0 ; touch /etc/sysconfig/selinux.disabled
