@@ -10,3 +10,8 @@ Install a ceph cluster for volume and image storage
 Install compute nodes
   - setup nova-compute with rbd support for volumes
   - setup ovs-agent
+
+To subscribe using subscription-manager pass the following 3 varables via cli
+  - rhn-user
+  - rhn-pass
+  - pool

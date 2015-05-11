@@ -5,7 +5,7 @@
 - name: load sysctl
   shell: sysctl -p /etc/sysctl.d/99-sysctl.conf
 
-- include: haproxy.yml
 
+- include: haproxy.yml
 # Install the DB services
 - include: mariadb.yml
